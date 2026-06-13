@@ -749,6 +749,9 @@ class AttendanceApp:
         
         self.card_frame.configure(highlightbackground="#2d2d34", highlightcolor="#2d2d34", highlightthickness=1)
 
+    def update_status_bar(self, text, fg, bg):
+        self.status_pill.configure(text=text, fg=fg, bg=bg)
+
     def toggle_camera(self):
         if self.app_state == STATE_OFF:
             self.cap = cv2.VideoCapture(0)
