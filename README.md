@@ -1,6 +1,8 @@
-# AURA — Biometric Face Recognition Attendance System
+# CDAC — Biometric Face Recognition Attendance System
 
-AURA is a real-time, kiosk-style biometric student attendance system built using **OpenCV** and **Python (Tkinter)**. It utilizes the **LBPH (Local Binary Patterns Histograms) Face Recognizer** to locally register, train, and identify student faces in real-time.
+*Developed by: Hexonn Labs*
+
+This product is a real-time, kiosk-style biometric student attendance system built using **OpenCV** and **Python (Tkinter)**. It utilizes deep learning models—**YuNet** for robust face detection and **SFace** for face recognition—to locally register, train, and identify student faces in real-time.
 
 The application is split into a public-facing **Check-In Kiosk** and a secure, password-protected **Administrative Portal** for enrollment, student database management, and logging.
 
@@ -30,7 +32,7 @@ python -m venv venv
   ```
 
 ### Step 3: Install Dependencies
-AURA requires the contributed module packages of OpenCV for the Face Recognition module (`cv2.face`). 
+Hexonn Labs requires the contributed module packages of OpenCV for the Face Recognition module (`cv2.face`). 
 
 > [!WARNING]
 > If you have the standard `opencv-python` package installed, it will conflict with `opencv-contrib-python` and hide the face recognition module. Please uninstall it first:
@@ -54,7 +56,7 @@ python app.py
 
 ---
 
-## 💡 How to Use AURA
+## 💡 How to Use Hexonn Labs
 
 ### 1. Kiosk Attendance Check-In (Home Screen)
 * Click **Start Video Capture** to initialize your webcam feed.
