@@ -654,10 +654,13 @@ class AttendanceApp:
         
         def download_thread():
             import urllib.request
+            import ssl
+            
+            ssl_context = ssl._create_unverified_context()
             
             urls = [
-                ("YuNet Face Detector", "https://github.com/opencv/opencv_zoo/raw/master/models/face_detection_yunet/face_detection_yunet_2023mar.onnx", self.yunet_path),
-                ("SFace Recognizer", "https://github.com/opencv/opencv_zoo/raw/master/models/face_recognition_sface/face_recognition_sface_2021dec.onnx", self.sface_path)
+                ("YuNet Face Detector", "https://huggingface.co/opencv/face_detection_yunet/resolve/main/face_detection_yunet_2023mar.onnx", self.yunet_path),
+                ("SFace Recognizer", "https://huggingface.co/opencv/face_recognition_sface/resolve/main/face_recognition_sface_2021dec.onnx", self.sface_path)
             ]
             
             for name, url, path in urls:
@@ -669,13 +672,33 @@ class AttendanceApp:
                 try:
                     os.makedirs(os.path.dirname(path), exist_ok=True)
                     
-                    def reporthook(blocknum, blocksize, totalsize):
-                        if totalsize > 0:
-                            percent = min(100, int(blocknum * blocksize * 100 / totalsize))
-                            self.window.after(0, lambda p=percent: self.update_status_bar(f"DOWNLOADING {p}%", "#eab308", "#27272a"))
+                    req = urllib.request.Request(
+                        url, 
+                        headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+                    )
+                    
+                    with urllib.request.urlopen(req, context=ssl_context) as response, open(path, 'wb') as out_file:
+                        total_size = int(response.getheader('Content-Length', 0))
+                        downloaded = 0
+                        block_size = 8192
+                        
+                        while True:
+                            buffer = response.read(block_size)
+                            if not buffer:
+                                break
+                            downloaded += len(buffer)
+                            out_file.write(buffer)
                             
-                    urllib.request.urlretrieve(url, path, reporthook)
+                            if total_size > 0:
+                                percent = min(100, int(downloaded * 100 / total_size))
+                                self.window.after(0, lambda p=percent, n=name: self.update_status_bar(f"DL {n} {p}%", "#eab308", "#27272a"))
                 except Exception as e:
+                    # Cleanup partially downloaded file
+                    if os.path.exists(path):
+                        try:
+                            os.remove(path)
+                        except Exception:
+                            pass
                     self.window.after(0, lambda err=e: messagebox.showerror("Download Error", f"Failed to download deep learning models: {err}\n\nPlease check your internet connection and restart."))
                     self.window.after(0, self.on_download_failed)
                     return
