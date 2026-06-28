@@ -633,7 +633,7 @@ class AttendanceApp:
                     self.embeddings_map = json.load(f)
                 self.embeddings_np = {}
                 for label_str, emb_list in self.embeddings_map.items():
-                    self.embeddings_np[label_str] = [np.array(emb, dtype=np.float32) for emb in emb_list]
+                    self.embeddings_np[label_str] = [np.array(emb, dtype=np.float32).reshape(1, -1) for emb in emb_list]
                 self.is_trained = len(self.embeddings_np) > 0
             except Exception as e:
                 print(f"Error loading embeddings: {e}")
